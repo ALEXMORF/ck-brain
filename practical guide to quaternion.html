@@ -41,12 +41,13 @@ You probably have seen it in its complex form, which is encoded by four coeffici
 <p>Since we are using quaternions to encode rotation, we can restrict ourselves to only use unit quaternions,
 meaning the magnitude of the quaternion (as a 4d vector) is equal to 1. In order to use quaternion for 3d rotation, you need to know these two equation:</p>
 
-<center>
-<p><b>rotation around v (axis) by w (angle in radians): q = (v * sin(w/2), cos(w/2)) </b></p>
-<p><b>rotating p with q: p' = q * f(p) * q<sup>-1</sup></b></p>
-</center>
+<center><p><b>rotation around v (axis) by w (angle in radians): q = (v * sin(w/2), cos(w/2)) </b></p></center>
 
-<p>where p is the point being rotated, q is the quaternion encoding the rotation, f(p) is the quaternion equivalent of p, 
+<p>This is how you typically construct a quaternion out of a given rotation in 3d, using the axis-angle representation.</p>
+
+<center><p><b>rotating p with q: p' = q * f(p) * q<sup>-1</sup></b></p></center>
+
+<p>This is how you rotate point p with rotation encoded in q, where f(p) is the quaternion equivalent of p, 
 and q<sup>-1</sup> being the inverse of q. I don't really have anything to say about these two equations, as I myself don't 
 know how and why they work. I just know that they work and memorizing these two equations is enough for most stuff I do.</p>
 
@@ -70,7 +71,7 @@ is simply rotation in the other direction. Therefore:
 
 <center><b>q<sup>-1</sup> = (v * -sin(w/2), cos(w/2))</b></center>
 
-<p>We can easily apply this to the complex form as well. Now if you allow me to pretend this is C and let me use the dot operator:</p>
+<p>We can easily apply this to the complex form as well:</p>
 
 <center><b>q<sup>-1</sup> = (-q.x, -q.y, -q.z, q.w)</b></center>
 
@@ -89,8 +90,8 @@ It is very simple, just use all the components from p as q's imaginary component
 
 <h3>Multiplication</h3>
 
-<p>I find this very poorly covered by most tutorials, and therefore I will spend majority of the post
-talking about the derivation of quaternion multiplication and its intution. I belive you have ceome across
+<p>I find this very poorly covered by most tutorials, and therefore I will spend the majority of this article
+talking about the derivation of quaternion multiplication and some useful intuition. I believe you have come across
 complex numbers in your middle school algebra class:</p>
 
 <center><b>x + yi</b></center>
@@ -203,6 +204,10 @@ rotations in 3d space is non-commutative and therefore the order actually matter
 
 <p>Because q2<sup>-1</sup> is applied before q1<sup>-1</sup>, q2's encoded rotation will be applied to p before q1's does.</p>
 
+<p>So if you want R1 to occur before R2, the right way of concatenating the two quaternions is this:</p>
+
+<center><b>q = q2 * q1</b></center>
+
 <h3>Lerp</h3>
 
 <p>Quaternions are known for being easily lerp'able. In my opinion, this is the single feature that makes quaternion the best representation of rotations in 3d space. It makes coding a 3d 
@@ -244,7 +249,8 @@ digging deeper into quaternions:</p>
 
 <center>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/fKIss4EV6ME" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-</center><hr><a href="./index.html">Home</a></div>
+</center>
+<hr><center><a href="./index.html">Home</a></center></div>
 
 </body>
 </html>
