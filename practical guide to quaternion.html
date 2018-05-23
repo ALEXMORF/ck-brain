@@ -1,0 +1,181 @@
+
+<!DOCTYPE html> 
+                         <html> 
+                         
+                         <head>
+                         <title>CK Brain Archive</title>
+                         <link rel="stylesheet" type="text/css" href="blog.css">
+                         </head>
+                         
+                         <body>
+                                                  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+                         <div class="post">
+<h2>practical guide to quaternion</h2>
+<b>This article serves as the practical guide only. It's probably useful if you are a graphics 
+or game programmer, but not so useful if you are a math person. Enough preamble, let's get started.</b>
+
+<h3>What is a quaternion?</h3>
+
+<p>A quaternion is just one of the many representations of rotation in 3d space. It is praised 
+for being easily-interpolatable and space-efficient. It's a lot more light-weight than the heavy
+3x3 rotation matrix (4 floats vs 9 floats), and it's a lot easier to use than Euler angle. (axis/angle representation vs rotation angle around all 3 axis)
+You probably have seen it in its complex form, which is encoded by four coefficients.</p>
+
+<center><b>xi + yj + zk + w</b></center>
+
+<p>Where the imaginary components i, j, and k obeys the following properties</p>
+
+<center><b>i<sup>2</sup> = i<sup>2</sup> = i<sup>2</sup> = ijk = -1</b></center>
+
+<h3>Unit Quaternion's pragmatic usage in 3D</h3>
+
+<p>Since we are using quaternions to encode rotation, we can restrict ourselves to only use unit quaternions,
+meaning the magnitude of the quaternion (as a 4d vector) is equal to 1. In order to use quaternion for 3d rotation, you need to know these two equation:</p>
+
+<center>
+<p><b>rotation around v (axis) by w (angle in radians): q = (v * sin(w/2), cos(w/2)) </b></p>
+<p><b>rotating p with q: p' = q * f(p) * q<sup>-1</sup></b></p>
+</center>
+
+<p>where p is the point being rotated, q is the quaternion encoding the rotation, f(p) is the quaternion equivalent of p, 
+and q<sup>-1</sup> being the inverse of q. I don't really have anything to say about these two equations, as I myself don't 
+know how and why they work. I just know that they work and memorizing these two equations is enough for most stuff I do.</p>
+
+<p>But in order to evaluate this equation, we must first solve the following equations</p>
+
+<center>
+<p><b>Conjegate (inverse): q<sup>-1</sup> = ?</b></p>
+<p><b>Multiplication: q<sub>1</sub>*q<sub>2</sub> = ?</b></p>
+<p><b>p -> q: f(p) = ?</b></p>
+</center>
+
+<h3>Conjegate (Inverse)</h3>
+
+<p>The conjegate of quaternion q is quite intuitive. Recall that a unit quaternion is encoded as
+(v * sin(w/2), cos(w/2)), where w is the rotation angle. The inverse of this rotation operation 
+is simply rotation in the other direction. Therefore:
+
+<center><b>q<sup>-1</sup> = (v * sin(-w/2), cos(-w/2))</b></center>
+
+<p>And since cos(-w) = cos(w) and sin(-w) = -sin(w), we can factor out the inner negative sign out of cos() and sin():</p>
+
+<center><b>q<sup>-1</sup> = (v * -sin(w/2), cos(w/2))</b></center>
+
+<p>We can easily apply this to the complex form as well. Now if you allow me to pretend this is C and let me use the dot operator:</p>
+
+<center><b>q<sup>-1</sup> = (-q.x, -q.y, -q.z, q.w)</b></center>
+
+<h3>Our magical f(p)</h3>
+
+<p>f(p) is just a convinence notation that I used to denote "treating p as a quaternion" to meet the type-checking.
+It is very simple, just use all the components from p as q's imaginary component, and add a 0 as q's real component:</p>
+
+<center><b>q = f(p) = (p.x, p.y, p.z, 0)</b></center>
+
+<h3>Finally, the derivation of quaternion multiplication</h3>
+
+<p>I find this very poorly covered by most tutorials, and therefore I will spend majority of the post
+talking about the derivation of quaternion multiplication and its intution. I belive you have ceome across
+complex numbers in your middle school algebra class:</p>
+
+<center><b>x + yi</b></center>
+
+<p>In order to do operations on complex numbers such as the one above, you just have to treat i
+as an unknown variable first, do the maths as if these complex numbers are polynomials,  
+apply the <b>i<sup>2</sup> = -1 </b> rule to the expression, then regroup the numbers as coefficient (real part and imgainary part). Here's an example:</p>
+
+<center><b>(a + bi)(c + di) = ac + adi + bci + bdi<sup>2</sup></b></center>
+<center><b>= ac + adi + bci - bd</b></center>
+<center><b>= (ac - bd) + (ad + bc)i</b></center>
+
+<p>Simple, right? Well, multiplying quaternions is very much the same. It just has 3 imaginary numbers rather than 1, which means we will have to
+regroup the numbers as 4 different coefficients. Let q1 = (x1, y1, z1, w1) and q2 = (x2, y2, z2, w2). Let's try solving q1 * q2:</p>
+
+<center><b>(x1i + y1j + z1k + w1)(x2i + y2j + z2k + w2)</b></center>
+<center><b>= (x1i * x2i + x1i * y2j + x1i * z2k + x1i * w2) +  <br>
+(y1j * x2i + y1j * y2j + y1j * z2k + y1j * w2) + <br>
+(z1k * x2i + z1k * y2j + z1k * z2k + z1k * w2) + <br>
+(w1 * x2i + w1 * y2j + w1 * z2k + w1 * w2)</b></center>
+
+<br>
+<center><b>(Now watch out, the order of multiplication between i,j, and k matters! e.g. ij != ji)</b></center>
+<br>
+
+<center><b>= (x1x2i<sup>2</sup> + x1y2ij + x1z2ik + x1w2i) + <br>
+(y1x2ji + y1y2j<sup>2</sup> + y1z2jk + y1w2j) + <br>
+(z1x2ki + z1y2kj + z1z2k<sup>2</sup> + z1w2k) + <br>
+(w1x2i + w1y2j + w1z2k + w1w2)</b></center>
+
+<p>Recall that <b>i<sup>2</sup> = j<sup>2</sup> = k<sup>2</sup> = -1</b>, we can simplify some of the terms:</p>
+
+<center><b>q1q2 = (-x1x2 + x1y2ij + x1z2ik + x1w2i) + <br>
+(y1x2ji - y1y2 + y1z2jk + y1w2j) + <br>
+(z1x2ki + z1y2kj - z1z2 + z1w2k) + <br>
+(w1x2i + w1y2j + w1z2k + w1w2)</b></center>
+
+<p>Umm, looks like we are stuck. Remember we need the result of this multiplication to become its original complex form, which should only have
+4 terms: <b>xi + yj + zk + w</b>. But now we've got terms such as <b>ik</b>, how do we simplify that? Well, let's go back to i, j, k's properties:</p>
+
+<center><b>i<sup>2</sup> = i<sup>2</sup> = i<sup>2</sup> = ijk = -1</b></center>
+
+<p>This is very handy for solving the problem I just described. Let's say we are solving for <b>ij</b>. We know the following is true:</p>
+
+<center><b>ijk = -1</b></center>
+
+<p>We then right-multiply k on both sides:</p>
+
+<center><b>ijk<sup>2</sup> = -k</b></center>
+<center><b>ij(-1) = -k</b></center>
+
+<p>Then we factor out the -1</p>
+
+<center><b>ij = k</b></center>
+
+<p>Done! We can solve for the rest of these with similar procedures. We get:</p>
+
+<p><b>NOTE: Need to explain this part better</b></p>
+
+<center><b>ij = k</b></center>
+<center><b>ik = -j</b></center>
+<center><b>jk = i</b></center>
+
+<center><b>ji = -k</b></center>
+<center><b>ki = j</b></center>
+<center><b>kj = -i</b></center>
+
+<p>With these two equations, we can finally go back and solve for q1 * q2:</p>
+
+<center><b>q1q2 = (-x1x2 + x1y2ij + x1z2ik + x1w2i) + <br>
+(y1x2ji - y1y2 + y1z2jk + y1w2j) + <br>
+(z1x2ki + z1y2kj - z1z2 + z1w2k) + <br>
+(w1x2i + w1y2j + w1z2k + w1w2)</b></center>
+
+<center><b>q1q2 = (-x1x2 + x1y2k - x1z2j + x1w2i) + <br>
+(-y1x2k - y1y2 + y1z2i + y1w2j) + <br>
+(z1x2j - z1y2i - z1z2 + z1w2k) + <br>
+(w1x2i + w1y2j + w1z2k + w1w2)</b></center>
+
+<p>Now refactor all the terms, and we get our answer:</p>
+
+<center><b>q1q2 = (x1w2 + y1z2 - z1y2 + w1x2)i + <br>
+(-x1z2 + y1w2 + z1x2 + w1y2)j + <br>
+(x1y2 - y1x2 + z1w2 + w1z2)k + <br>
+(w1w2 - x1x2 - y1y2 - z1z2)</b></center>
+
+<h3>A little bonus</h3>
+
+<p>So if you are a programmer and you are trying to implement quaternion multiplication, then
+this is a small treat for you. You probably already found out this pattern anyways, but this is the 
+fast version of quaternion multiply (in psuedo GLSL): 
+
+<center><b>q1q2 = (q1.xyz*q2.w + q2.xyz*q1.w + cross(q1.xyz, q2.xyz), q1.w*q2.w - dot(q1.xyz,q2.xyz))</b></center>
+
+<p>Where the multiplications between vector and scalar are per-component. You might wonder what the weird .xyz or .w are. They
+are the <a href="https://www.khronos.org/opengl/wiki/Data_Type_(GLSL)#Swizzling">swizzle operations</a> that I am borrowing from GLSL for convenience's sake.</p>
+
+<h3>Lerp and shortest-path lerp</h3>
+<p>Under construction ...</p><hr><a href="home.html">Home</a></div>
+
+</body>
+</html>
+ 
