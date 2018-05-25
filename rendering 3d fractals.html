@@ -127,8 +127,13 @@ us that the 3D fractal must be at least <b>d(z)</b> amount of distance away from
 Therefore, instead of stepping a constant length, we can advance the ray by the estimated distance
 returned by the distance estimator.</p>
 
+<p>A ray stepping using the distance estimator. The circles in the images are unbounding volumes that 
+allows the ray to advance in big steps without overshooting</p>
+
+<center><img src="./data/raymarch_de.JPG"></center>
+
 <p>Note that the distance estimator only ensures to be the lower bound of the closest distance between current
-point and the 3D fractal. Hence the word "estimator".</p>
+point and the 3D fractal. It might not be anywhere near the actual distance value, hence the word "estimator".</p>
 
 <p>Still, two questions linger: how did we arrive at this distance estimator equation, and 
 how do we compute the derivative of the orbit of z? Well, let's hold on to the first question 
