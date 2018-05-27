@@ -181,8 +181,19 @@ The fake ambient occlusion is just an inverse of the iteration fog.</p>
 
 <p>It doesn't require any dependency to
 run and it doesn't rely on external platform API. Due to the same reasons, I don't have multithreading
-or SIMD to speed it up. If you have a decent computer, expect around 20~30 seconds to spit out
+or SIMD to speed it up. If you have a decent computer, expect around 40~50 seconds to spit out
 the rendered picture. But hey, you can run it on all platforms without any convoluted build tools.</p>
+
+<p><b>EDIT: for some reason at the time of this writing, I seemed to forget that the new C++ standard 
+includes mulithreading libraries. So I went ahead and added a simple multithreaded job system with 
+std::thread and std::atomic. This multithreaded version finishes rendering in around 7~8 seconds, 
+which is a huge speed up. Since I only used the standard library, you can still run it on all platforms
+with a single build command.</b></p>
+
+<center>
+<p><b>Source code for the aceelerated fractal raytracer</b></p>
+<a href="./data/mt_fractal.cpp">mt_fractal.cpp</a>
+</center>
 
 <h3>More Variations, Only Limited by Your Imagination</h3>
 
