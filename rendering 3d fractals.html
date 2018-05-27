@@ -19,6 +19,8 @@
                          <div class="post">
 <h2>rendering 3d fractals</h2>
 <hr>
+<center><img src="./data/mandelbulb.bmp"></center>
+
 <h3>What are Fractals?</h3>
 
 <p>Say you start with some kind of space, be it 2D or 3D. For every single point p in that space, you apply some test f(). As a result, all points that pass the test f() will form some
@@ -208,7 +210,24 @@ quaternion in each iteration. I think of it as "pulling" the quaternion towards 
 during their orbit: </p>
 
 <center><img src="./data/julia_set_pulled.bmp"></center>
-<hr><center><a href="./index.html">Home</a></center></div>
+
+<h3>"Infinite" Details</h3>
+
+<p>What's truly fascinating about fractals are their infinite details. If what you're rendering is a true fractal, 
+no matter how much you zoom in into the fractal, there will always be more variations to find. Due to this property,
+The derivative of any point on the surface of a 3d fractal is undefined (which is not always true in the fractals that
+we created ourselves, which makes them fake fractals). An easy way to zoom into a 3d fractal is to scale the space in which
+the fractal resides. By doing so, you are scaling down the camera space and seeing more details out of the fractal.</p>
+
+<p>With the tools that we explored in this article, you should be able to easily write a pathtrace that produces 
+image that is infinitely more physically accurate, like the one below (source code included).</p>
+
+<center>
+<p><b>A shallow zoom into the Mandelbulb fractal, pathtraced. Rendered in 4 minutes.</b></p>
+<img src="./data/mandelbulb.bmp">
+<p><b>Source code:</b></p>
+<a href="./data/mandelbulb.cpp">mandelbulb.cpp</a>
+</center><hr><center><a href="./index.html">Home</a></center></div>
 
 </body>
 </html>
