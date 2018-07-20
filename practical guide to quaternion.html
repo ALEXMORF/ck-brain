@@ -215,7 +215,7 @@ rotations in 3d space is non-commutative and therefore the order actually matter
 animation system so goddamn easy. You can lerp between two quaternions exactly like how you lerp two 3d points, except you must re-normalize the lerp result between quaternions, since we want
 to preserve the unit-ness in them to represent rotations in 3d space.</p>
 
-<center><b>lerp(q1, q2, t) = normalize(t*q1 + (1-t)*q2)</b></center>
+<center><b>lerp(q1, q2, t) = normalize((1-t)*q1 + t*q2)</b></center>
 
 <h3>Quaternion Double Cover and "Shortest Path" Lerp</h3>
 
@@ -233,7 +233,7 @@ q and itself own negation, -q, hold the "same" rotation in 3d (not actually the 
 different ... I know, mind blown). We can simply negate one of them so that both are in the same neighborhood. To achieve that, we multiply 
 the sign of dot product between the two quaternions to one of the quaternions in the lerp() equation.</p>
 
-<center><b>shortest_lerp(q1, q2, t) = normalize(sign(dot(q1, q2))*t*q1 + (1-t)*q2)</b></center>
+<center><b>shortest_lerp(q1, q2, t) = normalize(sign(dot(q1, q2))*(1-t)*q1 + t*q2)</b></center>
 
 <h3>More resources</h3>
 
